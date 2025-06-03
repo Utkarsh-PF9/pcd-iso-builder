@@ -1,17 +1,25 @@
 [Unit]
 Description=Custom System Management UI
-After=multi-user.target
+After=multi-user.target getty.target
+Conflicts=getty@tty1.service
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/custom-ui.sh
-StandardInput=tty
+ExecStart=/bin/bash -c 'cd /home/ubuntu && /usr/local/bin/custom-ui.sh; echo "Custom UI exited. You now have a normal terminal."; echo "Type custom-ui to restart the management interface."; exec /bin/bash --login'
+StandardInput=tty-force
 StandardOutput=tty
+StandardError=journal
 TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
 User=ubuntu
-Environment=TERM=xterm-256color
-Restart=always
-RestartSec=5
+Group=ubuntu
+Environment=TERM=linux
+Environment=HOME=/home/ubuntu
+WorkingDirectory=/home/ubuntu
+Restart=no
+KillMode=process
 
 [Install]
 WantedBy=multi-user.target

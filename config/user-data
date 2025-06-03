@@ -20,6 +20,9 @@ autoinstall:
   shutdown: poweroff
   package_update: false
   package_upgrade: false
+  packages:
+    - python3
+    - python3-pip
   storage:
     layout:
       name: direct
@@ -31,6 +34,12 @@ autoinstall:
     - cp /cdrom/ubuntu.sudoers /target/etc/sudoers.d/99-user-ubuntu
     - cp /cdrom/custom-ui.sh /target/usr/local/bin/
     - chmod +x /target/usr/local/bin/custom-ui.sh
+    - cp /cdrom/custom-ui.py /target/usr/local/bin/
+    - chmod +x /target/usr/local/bin/custom-ui.py
     - cp /cdrom/custom-ui.service /target/etc/systemd/system/
+    - mkdir -p /target/etc/systemd/system/getty@tty1.service.d
+    - cp /cdrom/autologin-getty.conf /target/etc/systemd/system/getty@tty1.service.d/override.conf
+    - cp /cdrom/custom-ui-alias.sh /target/etc/profile.d/
     - curtin in-target --target=/target -- systemctl enable custom-ui.service
+    - curtin in-target --target=/target -- systemctl disable getty@tty1.service
     - cp /cdrom/.desktop /target/etc/xdg/autostart/
