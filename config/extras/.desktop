@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Ubuntu System Management
+Comment=System management tool
+Exec=gnome-terminal --window --maximize --title="Ubuntu System Management" -- /usr/local/bin/custom-ui.sh
+Icon=utilities-system-monitor
+Terminal=false
+StartupNotify=true
+X-GNOME-Autostart-enabled=true
+Categories=System;Monitor;

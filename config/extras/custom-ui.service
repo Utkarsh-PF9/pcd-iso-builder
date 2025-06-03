@@ -1,0 +1,17 @@
+[Unit]
+Description=Custom System Management UI
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/custom-ui.sh
+StandardInput=tty
+StandardOutput=tty
+TTYPath=/dev/tty1
+User=ubuntu
+Environment=TERM=xterm-256color
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

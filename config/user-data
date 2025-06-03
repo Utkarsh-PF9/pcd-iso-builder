@@ -1,1 +1,36 @@
-user-data.efi
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: ub2404
+    username: ubuntu
+    # password: "secret" ($ openssl passwd -6 -salt $(openssl rand -hex 8) "secret")
+    password: "$6$1deb934eb89e6d28$Dvr8HQRlBvpX4PVSLB0tOcQqfD38L8glDWIk.tjQQNMh9OvXqhz45hPEC6yoJSMWGTvOdUX8n.f7XZ5EbtJy.1"
+  early-commands: []
+  keyboard:
+    layout: us
+  network:
+    network:
+      version: 2
+      ethernets:
+        any:
+          match:
+            name: "e*"
+          dhcp4: true
+  shutdown: poweroff
+  package_update: false
+  package_upgrade: false
+  storage:
+    layout:
+      name: direct
+  ssh:
+    install-server: true
+    allow-pw: true
+    authorized-keys: []
+  late-commands:
+    - cp /cdrom/ubuntu.sudoers /target/etc/sudoers.d/99-user-ubuntu
+    - cp /cdrom/custom-ui.sh /target/usr/local/bin/
+    - chmod +x /target/usr/local/bin/custom-ui.sh
+    - cp /cdrom/custom-ui.service /target/etc/systemd/system/
+    - curtin in-target --target=/target -- systemctl enable custom-ui.service
+    - cp /cdrom/.desktop /target/etc/xdg/autostart/
