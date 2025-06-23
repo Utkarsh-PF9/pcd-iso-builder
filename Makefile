@@ -15,6 +15,12 @@ METADATA_DEST = iso_root/meta-data
 EXTRAS_SRCDIR = config/extras/
 EXTRAS_DESTDIR = iso_root/
 
+GO_USERDATA_SRC = go-ui/user-data
+GO_USERDATA_DEST = iso_root/user-data
+GO_CUSTOM_UI_SERVICE_SRC = go-ui/custom-ui.service
+GO_CUSTOM_UI_SHELL_SCRIPT_SRC = go-ui/custom-ui.sh
+
+
 GENISO_LABEL = MYUBISOIMG
 GENISO_FILENAME = ubuntu-custom-autoinstaller.$(shell date +%Y%m%d.%H%M%S).iso
 GENISO_BOOTIMG = boot/grub/i386-pc/eltorito.img
@@ -55,6 +61,18 @@ setup:
 	cp -f $(USERDATA_SRC) $(USERDATA_DEST)
 	cp -f $(METADATA_SRC) $(METADATA_DEST)
 	rsync -av $(EXTRAS_SRCDIR)/. $(EXTRAS_DESTDIR)/.
+
+.PHONY: setup-go-ui
+setup-go-ui:
+	chmod 755 $(ISO_ROOT)
+	chmod 644 $(GRUBCFG_DEST)
+	cp -f $(GRUBCFG_SRC) $(GRUBCFG_DEST)
+	chmod 755 $(ISO_ROOT)
+	cp -f $(GO_USERDATA_SRC) $(GO_USERDATA_DEST)
+	cp -f $(METADATA_SRC) $(METADATA_DEST)
+	rsync -av $(EXTRAS_SRCDIR)/. $(EXTRAS_DESTDIR)/.
+	cp -f $(GO_CUSTOM_UI_SERVICE_SRC) $(EXTRAS_DESTDIR)
+	cp -f $(GO_CUSTOM_UI_SHELL_SCRIPT_SRC) $(EXTRAS_DESTDIR)
 
 .PHONY: setup-isolinux
 setup-isolinux:
