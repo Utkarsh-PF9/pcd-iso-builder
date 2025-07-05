@@ -2,6 +2,15 @@
 # Run system update
 sudo apt update
 
+if ! command -v go &> /dev/null; then
+    echo "Go is required but not installed."
+    echo "Installing Go..."
+    sudo apt update && sudo apt install -y golang
+else
+    echo "Go is already installed."
+fi
+
+
 # ⚠️ Run the UI binary script (ensure path is correct and executable)
 if [[ -x /usr/local/bin/pcd-iso-ui ]]; then
     /usr/local/bin/pcd-iso-ui

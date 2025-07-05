@@ -77,10 +77,10 @@ func (m loadingModel) View() string {
 	// "9" styled in bold blue with blinking background
 	nineStyle := lipgloss.NewStyle().
 		Bold(true).
-		Foreground(lipgloss.Color("33")) // blue foreground
+		Foreground(lipgloss.Color("39")) // blue foreground
 
 	if m.showCursor {
-		nineStyle = nineStyle.Background(lipgloss.Color("33")) // white bg
+		nineStyle = nineStyle.Background(lipgloss.Color("39")) // white bg
 	} else {
 		nineStyle = nineStyle.Background(lipgloss.Color("0")) // black bg
 	}

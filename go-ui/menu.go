@@ -87,9 +87,9 @@ func MenuInitialModel(isConfigured bool) menu {
 	delegate := list.NewDefaultDelegate()
 
 	delegate.Styles.SelectedTitle = delegate.Styles.SelectedTitle.
-		Foreground(lipgloss.Color("33")).BorderForeground(lipgloss.Color("33")) // Blue for selected item
+		Foreground(lipgloss.Color("39")).BorderForeground(lipgloss.Color("39")) // Blue for selected item
 	delegate.Styles.SelectedDesc = delegate.Styles.SelectedDesc.
-		Foreground(lipgloss.Color("33")).BorderForeground(lipgloss.Color("33"))
+		Foreground(lipgloss.Color("39")).BorderForeground(lipgloss.Color("39"))
 
 	m := menu{list: list.New(items, delegate, 0, 0),isConfigured: isConfigured}
 

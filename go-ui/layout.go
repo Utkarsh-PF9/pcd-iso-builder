@@ -9,9 +9,9 @@ var stack = []string{"menu"}
 
 var helpMap map[string]string = map[string]string{
 	"menu":    "move: ↑/↓  •  select: enter  •  exit: ctrl + c",
-	"network": "back: esc  •  exit: ctrl + c",
+	"network": "next field: tab  •  previous field: shift + tab  •  submit: enter  •  back: esc  •  exit: ctrl + c",
 	"storage": "back: esc  •  exit: ctrl + c",
-	"form":    "submit: enter  •  back: esc  •  exit: ctrl + c",
+	"form":    "next field: tab  •  previous field: shift + tab  •  submit: enter  •  back: esc  •  exit: ctrl + c",
 }
 
 type layout struct {
@@ -50,7 +50,7 @@ func (m layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "menu":
 			m.currentPage = MenuInitialModel(checkIsPCDCtlConfigured())
 		case "network":
-			m.currentPage = NetworkInitialModel()
+			m.currentPage = NetworkInitialModel(m.width, m.height)
 		case "storage":
 			m.currentPage = StorageInitialModel()
 		}
@@ -58,8 +58,8 @@ func (m layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.width = int(0.8 * float64(msg.Width))
-		m.height = int(0.8 * float64(msg.Height))
+		m.width = int(0.7 * float64(msg.Width))
+		m.height = int(0.7 * float64(msg.Height))
 
 		// Propagate new size to current page if it supports WindowSizeMsg
 		if wm, ok := m.currentPage.(tea.Model); ok {
@@ -77,10 +77,10 @@ func (m layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg {
 		case "form":
 			stack = append(stack, "form")
-			m.currentPage = FormInitialModel()
+			m.currentPage = FormInitialModel(m.width,m.height)
 		case "network":
 			stack = append(stack, "network")
-			m.currentPage = NetworkInitialModel()
+			m.currentPage = NetworkInitialModel(m.width, m.height)
 		case "storage":
 			stack = append(stack, "storage")
 			m.currentPage = StorageInitialModel()
@@ -156,8 +156,8 @@ func (m layout) View() string {
 
 func LayoutInitialModel(width, height int) layout {
 	return layout{
-		width:       int(0.8 * float64(width)),
-		height:      int(0.8 * float64(height)),
+		width:       int(0.7 * float64(width)),
+		height:      int(0.7 * float64(height)),
 		currentPage: MenuInitialModel(checkIsPCDCtlConfigured()),
 	}
 }
