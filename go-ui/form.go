@@ -143,7 +143,7 @@ func FormInitialModel(width, height int) setup {
 					return nil
 				}).WithTheme(buttonTheme),
 		).Title("Configure pcdctl"),
-	).WithTheme(t).WithShowHelp(false).WithHeight(int(0.7*float64(height))).WithWidth(int(0.4*float64(width))).WithKeyMap(&huh.KeyMap{
+	).WithTheme(t).WithShowHelp(false).WithHeight(int(0.7*float64(height))).WithWidth(int(0.7*float64(width))).WithKeyMap(&huh.KeyMap{
 		Input: huh.InputKeyMap{
 			Next: key.NewBinding(key.WithKeys("tab")),
 			Prev: key.NewBinding(key.WithKeys("shift+tab")),
