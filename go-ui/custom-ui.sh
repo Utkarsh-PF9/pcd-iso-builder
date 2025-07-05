@@ -13,7 +13,7 @@ fi
 
 # ⚠️ Run the UI binary script (ensure path is correct and executable)
 if [[ -x /usr/local/bin/pcd-iso-ui ]]; then
-    /usr/local/bin/pcd-iso-ui
+    sudo /usr/local/bin/pcd-iso-ui
 else
     echo "Error: /usr/local/bin/pcd-iso-ui not found or not executable."
     exit 1

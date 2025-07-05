@@ -58,8 +58,8 @@ func (m layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.width = int(0.7 * float64(msg.Width))
-		m.height = int(0.7 * float64(msg.Height))
+		m.width = int(0.8 * float64(msg.Width))
+		m.height = int(0.8 * float64(msg.Height))
 
 		// Propagate new size to current page if it supports WindowSizeMsg
 		if wm, ok := m.currentPage.(tea.Model); ok {
@@ -156,8 +156,8 @@ func (m layout) View() string {
 
 func LayoutInitialModel(width, height int) layout {
 	return layout{
-		width:       int(0.7 * float64(width)),
-		height:      int(0.7 * float64(height)),
+		width:       int(0.8 * float64(width)),
+		height:      int(0.8 * float64(height)),
 		currentPage: MenuInitialModel(checkIsPCDCtlConfigured()),
 	}
 }
