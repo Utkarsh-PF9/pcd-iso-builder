@@ -2,13 +2,42 @@ package main
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/lipgloss"
+	utils "example/internals/utils"
 )
+
+func performInstllation(url,username,password,region,tenant string) error {
+	// Step 1: Install pcdctl
+	err := utils.RunCommand("bash", "-c", "bash <(curl -s https://pcdctl.s3.us-west-2.amazonaws.com/pcdctl-setup)")
+	if err != nil {
+		return fmt.Errorf("Failed to install pcdctl: %v\n", err)
+	}
+
+	// Step 2: Configure pcdctl
+
+	configCmd := fmt.Sprintf("pcdctl config set -u %s -e %s -p %s -r %s -t %s", url, username, password, region, tenant)
+	err = utils.RunCommand("bash", "-c", configCmd)
+	if err != nil {
+		return fmt.Errorf("Failed to configure pcdctl: %v\n", err)
+	}
+
+	// Step 3: Prep the node
+	err = utils.RunCommand("pcdctl", "prep-node")
+	if err != nil {
+		return fmt.Errorf("Failed to run prep-node: %v\n", err)
+	}
+
+	fmt.Println("PCD node setup complete!")
+
+	return nil
+}
+
 
 
 type setup struct {
@@ -140,10 +169,18 @@ func FormInitialModel(width, height int) setup {
 					if formData.tenant == "" {
 						return errors.New("enter valid tenant")
 					}
+					
+					err:=performInstllation(formData.url,formData.username,formData.password,formData.region,formData.tenant)
+
+					if err!=nil{
+						return err
+					}
+
 					return nil
+
 				}).WithTheme(buttonTheme),
 		).Title("Configure pcdctl"),
-	).WithTheme(t).WithShowHelp(false).WithHeight(int(0.7*float64(height))).WithWidth(int(0.7*float64(width))).WithKeyMap(&huh.KeyMap{
+	).WithTheme(t).WithShowHelp(false).WithHeight(int(0.7*float64(height))).WithWidth(int(0.5*float64(width))).WithKeyMap(&huh.KeyMap{
 		Input: huh.InputKeyMap{
 			Next: key.NewBinding(key.WithKeys("tab")),
 			Prev: key.NewBinding(key.WithKeys("shift+tab")),

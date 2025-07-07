@@ -383,7 +383,7 @@ func NetworkInitialModel(width, height int) network {
 				SelectAll:  key.NewBinding(key.WithKeys("A")),
 				SelectNone: key.NewBinding(key.WithKeys("N")),
 			},
-		}).WithHeight(int(0.7*float64(height))).WithWidth(int(0.7*float64(width))).WithTheme(t),
+		}).WithHeight(int(0.7*float64(height))).WithWidth(int(0.5*float64(width))).WithTheme(t),
 
 		form_data: form_data_values,
 	}
