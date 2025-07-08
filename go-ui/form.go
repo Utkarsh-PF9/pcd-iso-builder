@@ -3,40 +3,88 @@ package main
 import (
 	"errors"
 	"fmt"
-
+	"os"
+	"os/exec"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/lipgloss"
-	utils "example/internals/utils"
 )
 
-func performInstllation(url,username,password,region,tenant string) error {
-	// Step 1: Install pcdctl
-	err := utils.RunCommand("bash", "-c", "bash <(curl -s https://pcdctl.s3.us-west-2.amazonaws.com/pcdctl-setup)")
-	if err != nil {
-		return fmt.Errorf("Failed to install pcdctl: %v\n", err)
+
+func performInstllation(url, username, password, region, tenant string) error {
+
+	if _,err:=exec.LookPath("pcdctl");err==nil{
+		fmt.Println("pcdctl is alredy installed")
+	} else {
+		// Step 1: Download the script using curl and save locally
+		scriptPath := "/tmp/pcdctl-setup.sh"
+		curlCmd := exec.Command("curl", "-s", "-o", scriptPath, "https://pcdctl.s3.us-west-2.amazonaws.com/pcdctl-setup")
+		curlCmd.Stdout = os.Stdout
+		curlCmd.Stderr = os.Stderr
+
+		if err := curlCmd.Run(); err != nil {
+			return fmt.Errorf("failed to download pcdctl-setup script: %w", err)
+		}
+
+		// Step 2: Make the script executable
+		if err := os.Chmod(scriptPath, 0755); err != nil {
+			return fmt.Errorf("failed to chmod script: %w", err)
+		}
+
+		// Step 3: Run the script directly
+		runCmd := exec.Command(scriptPath)
+		runCmd.Stdout = os.Stdout
+		runCmd.Stderr = os.Stderr
+
+		if err := runCmd.Run(); err != nil {
+			return fmt.Errorf("failed to execute pcdctl setup script: %w", err)
+		}
 	}
 
-	// Step 2: Configure pcdctl
+	// Step 4: Check if pcdctl is already configured
+	getCmd := exec.Command("pcdctl", "config", "get")
+	getCmdOutput, err := getCmd.Output()
 
-	configCmd := fmt.Sprintf("pcdctl config set -u %s -e %s -p %s -r %s -t %s", url, username, password, region, tenant)
-	err = utils.RunCommand("bash", "-c", configCmd)
-	if err != nil {
-		return fmt.Errorf("Failed to configure pcdctl: %v\n", err)
+	if err != nil || len(getCmdOutput) == 0 {
+		// Either error or empty config – proceed with setting config
+		fmt.Println("ℹ️  Config not found. Running 'pcdctl config set'...")
+
+		configCmd := exec.Command("pcdctl", "config", "set",
+		"-u", url,
+		"-e", username,
+		"-p", password,
+		"-r", region,
+		"-t", tenant,
+		)
+
+		// following lines can be uncommented incase of Run instead of CombinedOuput
+		// configCmd.Stdout = os.Stdout
+		// configCmd.Stderr = os.Stderr
+
+		if out,err := configCmd.CombinedOutput(); err != nil {
+			return fmt.Errorf("failed to configure pcdctl: %w\nOutput:\n%s", err,string(out))
+    		}
+	} else {
+		fmt.Println("✅ pcdctl already configured. Skipping config step.")
 	}
 
-	// Step 3: Prep the node
-	err = utils.RunCommand("pcdctl", "prep-node")
-	if err != nil {
-		return fmt.Errorf("Failed to run prep-node: %v\n", err)
+
+	// Step 5: Prep the node
+	prepCmd := exec.Command("pcdctl", "prep-node","-c","true")
+	prepCmd.Stdout = os.Stdout
+	prepCmd.Stderr = os.Stderr
+
+	if err := prepCmd.Run(); err != nil {
+		return fmt.Errorf("failed to run prep-node: %w", err)
 	}
 
-	fmt.Println("PCD node setup complete!")
-
+	fmt.Println("✅ PCD node setup complete!")
 	return nil
 }
+
+
 
 
 
